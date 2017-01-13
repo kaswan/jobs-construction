@@ -1,61 +1,85 @@
 -- phpMyAdmin SQL Dump
--- version wadax
+-- version 3.3.10.5
 -- http://www.phpmyadmin.net
 --
--- Host: localhost:3306
--- Generation Time: Jun 30, 2015 at 08:58 午前
--- Server version: 5.1.73-log
--- PHP Version: 5.3.3
+-- ホスト: mysql326.db.sakura.ne.jp
+-- 生成時間: 2017 年 1 月 13 日 14:05
+-- サーバのバージョン: 5.5.38
+-- PHP のバージョン: 5.4.7
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
 
 --
--- Database: `ot-work-jp01`
+-- データベース: `medical-jobs_production`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `applicants`
+-- テーブルの構造 `applicants`
 --
 
 CREATE TABLE IF NOT EXISTS `applicants` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `serial_number` varchar(100) NOT NULL,
-  `name` varchar(100) NOT NULL COMMENT 'お名前',
-  `furigana` varchar(100) NOT NULL COMMENT 'ふりがな',
-  `gender` varchar(20) NOT NULL COMMENT '性別',
-  `date_of_birth` date NOT NULL COMMENT '生年月日',
-  `postalcode` varchar(20) NOT NULL COMMENT '郵便番号',
-  `prefecture_id` int(11) NOT NULL COMMENT '都道府県',
-  `address` varchar(255) NOT NULL COMMENT '住所',
-  `tel` varchar(100) NOT NULL COMMENT '携帯電話',
-  `email` varchar(255) NOT NULL COMMENT 'メールアドレス',
-  `contact_time` varchar(255) NOT NULL COMMENT '連絡時間帯',
-  `year_of_experience` varchar(255) NOT NULL COMMENT 'ご経験年数',
-  `desired_joining_time` varchar(255) NOT NULL COMMENT '入職希望',
-  `employment_pattern` varchar(255) NOT NULL COMMENT '就業形態',
-  `employment_status` varchar(255) NOT NULL COMMENT '就業状況',
-  `desired_location_first_id` int(11) NOT NULL COMMENT '希望勤務地１',
-  `desired_location_second_id` int(11) NOT NULL COMMENT '希望勤務地１',
-  `qualification_year` varchar(255) NOT NULL COMMENT '資格取得年',
-  `remarks` text NOT NULL COMMENT '備考',
-  `work_type_id` int(4) NOT NULL,
-  `status` enum('unread','read') NOT NULL DEFAULT 'unread',
+  `nickname` varchar(255) DEFAULT NULL,
+  `name` varchar(100) DEFAULT NULL COMMENT 'お名前',
+  `furigana` varchar(100) DEFAULT NULL COMMENT 'ふりがな',
+  `gender` varchar(20) DEFAULT NULL COMMENT '性別',
+  `date_of_birth` date DEFAULT NULL COMMENT '生年月日',
+  `postalcode` varchar(20) DEFAULT NULL COMMENT '郵便番号',
+  `prefecture_id` int(11) DEFAULT NULL COMMENT '都道府県',
+  `address` varchar(255) DEFAULT NULL COMMENT '住所',
+  `house_address` varchar(255) DEFAULT NULL COMMENT '番地',
+  `nearest_station` varchar(255) DEFAULT NULL,
+  `tel` varchar(100) DEFAULT NULL COMMENT '携帯電話',
+  `tel_home` varchar(255) DEFAULT NULL COMMENT '固定電話',
+  `email` varchar(255) DEFAULT NULL COMMENT 'メールアドレス',
+  `email_mobile` varchar(255) DEFAULT NULL COMMENT '携帯メールアドレス',
+  `contact_time` varchar(255) DEFAULT NULL COMMENT '連絡時間帯',
+  `education` varchar(255) DEFAULT NULL COMMENT '最終学歴',
+  `year_of_experience` varchar(255) DEFAULT NULL COMMENT 'ご経験年数',
+  `desired_joining_time` varchar(255) DEFAULT NULL COMMENT '入職希望',
+  `employment_pattern` varchar(255) DEFAULT NULL COMMENT '就業形態',
+  `employment_pattern_remarks` varchar(500) DEFAULT NULL,
+  `places_of_employment` varchar(500) DEFAULT NULL COMMENT '就業場所',
+  `annual_income` varchar(255) DEFAULT NULL COMMENT '年収',
+  `holiday` varchar(255) DEFAULT NULL COMMENT '休日',
+  `working_hours` varchar(255) DEFAULT NULL COMMENT '勤務時間',
+  `commuting_time` varchar(255) DEFAULT NULL COMMENT '通勤時間',
+  `commuting` varchar(255) DEFAULT NULL COMMENT '交通',
+  `employment_status` varchar(255) DEFAULT NULL COMMENT '就業状況',
+  `desired_location_first_id` int(11) DEFAULT NULL COMMENT '希望勤務地１',
+  `desired_location_second_id` int(11) DEFAULT NULL COMMENT '希望勤務地１',
+  `qualification_year` varchar(255) DEFAULT NULL COMMENT '資格取得年',
+  `contract_document` text COMMENT '書類関係',
+  `desired_department` varchar(255) DEFAULT NULL COMMENT '希望部署',
+  `desired_working_days` varchar(255) DEFAULT NULL COMMENT '勤務日数',
+  `remarks` text COMMENT '備考',
+  `entry_sheet_remarks` text,
+  `work_type_id` int(4) DEFAULT NULL,
+  `status` enum('unread','read') DEFAULT 'unread',
+  `progress_status_id` int(2) DEFAULT NULL,
+  `institution_id` int(11) DEFAULT NULL COMMENT '法人施設番号',
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
-  `user_id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
   `note_count` int(11) NOT NULL DEFAULT '0',
+  `upload_document_count` int(2) NOT NULL DEFAULT '0',
+  `post_id` int(11) DEFAULT NULL,
+  `mail_magazine_subscription` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'メルマガ希望',
+  `sort_modified_date` datetime DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `gender` (`gender`,`prefecture_id`,`work_type_id`,`status`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=100180 ;
+  KEY `prefecture_id` (`prefecture_id`),
+  KEY `tel` (`tel`),
+  KEY `sort_modified_date` (`sort_modified_date`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=11233 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `areas`
+-- テーブルの構造 `areas`
 --
 
 CREATE TABLE IF NOT EXISTS `areas` (
@@ -66,24 +90,7 @@ CREATE TABLE IF NOT EXISTS `areas` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `businesses`
---
-
-CREATE TABLE IF NOT EXISTS `businesses` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL COMMENT '事業所名',
-  `sort_no` int(11) NOT NULL,
-  `deleted` tinyint(1) NOT NULL DEFAULT '0',
-  `created_at` datetime NOT NULL,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `sort_no` (`sort_no`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=28 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `cake_sessions`
+-- テーブルの構造 `cake_sessions`
 --
 
 CREATE TABLE IF NOT EXISTS `cake_sessions` (
@@ -96,180 +103,102 @@ CREATE TABLE IF NOT EXISTS `cake_sessions` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `desired_jobs`
+-- テーブルの構造 `contact_people`
 --
 
-CREATE TABLE IF NOT EXISTS `desired_jobs` (
+CREATE TABLE IF NOT EXISTS `contact_people` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `applicant_id` int(11) NOT NULL COMMENT '求職者ID',
-  `business_id` int(11) NOT NULL COMMENT '事業所ID',
+  `institution_id` int(11) NOT NULL,
+  `department` varchar(255) DEFAULT NULL COMMENT '部署',
+  `name` varchar(255) DEFAULT NULL COMMENT '担当者名',
+  `title` varchar(255) DEFAULT NULL COMMENT '役職名',
+  `direct_phone_number` varchar(255) DEFAULT NULL COMMENT '直通電話番号',
+  `email` varchar(255) DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `applicant_id` (`applicant_id`,`business_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=836 ;
+  KEY `institution_id` (`institution_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=45418 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `features`
+-- ビュー用の代替構造 `entry_posts`
 --
-
-CREATE TABLE IF NOT EXISTS `features` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `deleted` tinyint(1) NOT NULL DEFAULT '0',
-  `created_at` datetime NOT NULL,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `deleted` (`deleted`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=48 ;
-
+CREATE TABLE IF NOT EXISTS `entry_posts` (
+`id` bigint(20) unsigned
+,`post_id` bigint(20) unsigned
+,`post_date` datetime
+,`post_type` varchar(20)
+,`meta_key` varchar(255)
+,`meta_value` longtext
+);
 -- --------------------------------------------------------
 
 --
--- Table structure for table `gengo`
---
-
-CREATE TABLE IF NOT EXISTS `gengo` (
-  `serial` varchar(100) NOT NULL,
-  `お名前` varchar(100) NOT NULL,
-  `ふりがな` varchar(100) NOT NULL,
-  `生年月日` varchar(100) NOT NULL,
-  `郵便番号` varchar(100) NOT NULL,
-  `都道府県` varchar(100) NOT NULL,
-  `市区町村` varchar(255) NOT NULL,
-  `番地・建物名` varchar(255) NOT NULL,
-  `携帯番号` varchar(100) NOT NULL,
-  `メールアドレス` varchar(255) NOT NULL,
-  `連絡の取りやすい時間帯` varchar(100) NOT NULL,
-  `経験年数` varchar(100) NOT NULL,
-  `入職希望時期` varchar(100) NOT NULL,
-  `就業形態` varchar(100) NOT NULL,
-  `就業状況` varchar(100) NOT NULL,
-  `希望勤務地１` varchar(100) NOT NULL,
-  `希望勤務地２` varchar(100) NOT NULL,
-  `希望事業所形態` varchar(500) NOT NULL,
-  `資格取得年` varchar(100) NOT NULL,
-  `職務施設１` varchar(100) NOT NULL,
-  `職務年数１` varchar(100) NOT NULL,
-  `職務施設２` varchar(100) NOT NULL,
-  `職務年数２` varchar(100) NOT NULL,
-  `職務施設３` varchar(100) NOT NULL,
-  `職務年数３` varchar(100) NOT NULL,
-  `職務施設４` varchar(100) NOT NULL,
-  `職務年数４` varchar(100) NOT NULL,
-  `職務施設５` varchar(100) NOT NULL,
-  `職務年数５` varchar(100) NOT NULL,
-  `date` datetime NOT NULL,
-  KEY `serial` (`serial`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `institutions`
+-- テーブルの構造 `institutions`
 --
 
 CREATE TABLE IF NOT EXISTS `institutions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
-  `furigana` varchar(100) NOT NULL,
-  `postalcode` varchar(50) NOT NULL,
-  `prefecture_id` int(11) NOT NULL,
-  `address` varchar(255) NOT NULL,
-  `tel` varchar(50) NOT NULL,
-  `fax` varchar(50) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `url` varchar(255) NOT NULL,
-  `contact_person_name` varchar(100) NOT NULL,
-  `contact_person_title` varchar(100) NOT NULL,
-  `contact_method` varchar(255) NOT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  `furigana` varchar(100) DEFAULT NULL,
+  `corporate_name` varchar(255) DEFAULT NULL COMMENT '法人名',
+  `corporate_furigana` varchar(255) DEFAULT NULL COMMENT '法人名 ふりがな',
+  `postalcode` varchar(50) DEFAULT NULL,
+  `prefecture_id` int(11) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `nearest_station` varchar(255) DEFAULT NULL COMMENT '最寄駅',
+  `tel` varchar(50) DEFAULT NULL,
+  `fax` varchar(50) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `url` varchar(255) DEFAULT NULL,
+  `classification` varchar(255) DEFAULT NULL COMMENT '区分',
+  `clinical_departments` varchar(255) DEFAULT NULL COMMENT '科目',
+  `number_of_beds` varchar(255) DEFAULT NULL COMMENT '病床数',
+  `nursing_standards` varchar(255) DEFAULT NULL COMMENT '看護基準',
+  `number_of_users` varchar(255) DEFAULT NULL COMMENT '利用者数',
+  `expected_annual_income` varchar(255) DEFAULT NULL COMMENT '想定年収',
+  `agreement_date` date DEFAULT NULL COMMENT '契約締結年月',
+  `contract_percentage` varchar(255) DEFAULT NULL COMMENT '契約パーセンテージ',
+  `contract_refund_policy` text COMMENT '返金規定',
+  `contract_document` text COMMENT '書類関係',
+  `interview_information` text COMMENT '面接情報',
+  `other` text COMMENT '備考欄（文字制限無し）',
+  `contact_person_count` int(5) NOT NULL DEFAULT '0',
+  `applicant_count` int(5) NOT NULL DEFAULT '0',
   `note_count` int(11) NOT NULL DEFAULT '0',
+  `upload_document_count` int(2) NOT NULL DEFAULT '0',
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` datetime NOT NULL,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=44935 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `institution_features`
+-- テーブルの構造 `mail_magazines`
 --
 
-CREATE TABLE IF NOT EXISTS `institution_features` (
+CREATE TABLE IF NOT EXISTS `mail_magazines` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `institution_id` int(11) NOT NULL,
-  `feature_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `body` text NOT NULL,
+  `options` text NOT NULL,
+  `responses` text NOT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `institution_id` (`institution_id`,`feature_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  UNIQUE KEY `id` (`id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=14 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `institution_nursing_facilities`
---
-
-CREATE TABLE IF NOT EXISTS `institution_nursing_facilities` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `institution_id` int(11) NOT NULL,
-  `maximum_acceptance` varchar(255) NOT NULL,
-  `acceptance_level` int(2) DEFAULT NULL,
-  `dementia_patient_support_status` tinyint(1) NOT NULL DEFAULT '0',
-  `dementia_supported_symptoms` text NOT NULL,
-  `chronic_disease_support_status` tinyint(1) NOT NULL DEFAULT '0',
-  `chronic_disease_supported_symptoms` text NOT NULL,
-  `medical_support_status` tinyint(1) NOT NULL DEFAULT '0',
-  `medical_support_detail` text,
-  `oxygen_day_in_liter` varchar(100) DEFAULT NULL,
-  `oxygen_night_in_liter` varchar(100) DEFAULT NULL,
-  `insulin_per_day` int(2) NOT NULL DEFAULT '0',
-  `insulin_timing` varchar(255) DEFAULT NULL,
-  `suction_of_phlegm_per_day` int(2) NOT NULL DEFAULT '0',
-  `artificial_dialysis_per_week` int(2) NOT NULL DEFAULT '0',
-  `medical_aid_at_night` tinyint(1) NOT NULL DEFAULT '0',
-  `nursing_services` text,
-  `other_requirements` text,
-  `created_at` datetime NOT NULL,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `institution_id` (`institution_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `institution_residency_requirements`
---
-
-CREATE TABLE IF NOT EXISTS `institution_residency_requirements` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `institution_id` int(11) NOT NULL,
-  `vacant_rooms` varchar(255) NOT NULL,
-  `vacant_single_rooms` varchar(255) NOT NULL,
-  `vacant_family_rooms` varchar(255) NOT NULL,
-  `scheduled_moving_type` varchar(255) NOT NULL,
-  `single_room_status` varchar(255) NOT NULL,
-  `family_room_status` varchar(255) NOT NULL,
-  `moving_in_cost_per_person` varchar(255) NOT NULL,
-  `monthly_cost_per_person` varchar(255) NOT NULL,
-  `repayment_lump_sum` varchar(255) NOT NULL,
-  `repayment_period` varchar(255) NOT NULL,
-  `refund` varchar(255) NOT NULL,
-  `created_at` datetime NOT NULL,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `institution_id` (`institution_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `notes`
+-- テーブルの構造 `notes`
 --
 
 CREATE TABLE IF NOT EXISTS `notes` (
@@ -278,86 +207,29 @@ CREATE TABLE IF NOT EXISTS `notes` (
   `type` varchar(100) NOT NULL,
   `date_time` datetime NOT NULL,
   `remarks` text NOT NULL,
+  `select_institution_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` datetime NOT NULL,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `target_id` (`target_id`,`type`,`date_time`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=56 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=17788 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `nursing_welfare_consulters`
+-- ビュー用の代替構造 `posts`
 --
-
-CREATE TABLE IF NOT EXISTS `nursing_welfare_consulters` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
-  `furigana` varchar(100) NOT NULL,
-  `gender` varchar(20) NOT NULL,
-  `postalcode` varchar(50) NOT NULL,
-  `prefecture_id` int(11) NOT NULL,
-  `address` varchar(255) NOT NULL,
-  `tel` varchar(50) NOT NULL,
-  `fax` varchar(50) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `contact_method` varchar(255) NOT NULL,
-  `scheduled_occupancy_timing` varchar(255) NOT NULL,
-  `desired_area` varchar(255) NOT NULL,
-  `scheduled_occupancy_type` varchar(255) NOT NULL,
-  `scheduled_moving_type` varchar(255) NOT NULL,
-  `required_tenant_form` varchar(255) NOT NULL,
-  `moving_in_cost_per_person` varchar(255) NOT NULL,
-  `monthly_cost_per_person` varchar(255) NOT NULL,
-  `required_facilities` text NOT NULL,
-  `note_count` int(11) NOT NULL DEFAULT '0',
-  `deleted` tinyint(1) NOT NULL DEFAULT '0',
-  `created_at` datetime NOT NULL,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
+CREATE TABLE IF NOT EXISTS `posts` (
+`id` bigint(20) unsigned
+,`post_date` datetime
+,`post_type` varchar(20)
+);
 -- --------------------------------------------------------
 
 --
--- Table structure for table `nursing_welfare_patients`
---
-
-CREATE TABLE IF NOT EXISTS `nursing_welfare_patients` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `nursing_welfare_consulter_id` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL COMMENT 'お名前',
-  `furigana` varchar(100) NOT NULL COMMENT 'ふりがな',
-  `gender` varchar(20) NOT NULL COMMENT '性別',
-  `date_of_birth` date NOT NULL COMMENT '生年月日',
-  `maximum_acceptance` varchar(255) NOT NULL,
-  `acceptance_level` int(2) DEFAULT NULL,
-  `dementia_patient_support_status` tinyint(1) NOT NULL DEFAULT '0',
-  `dementia_supported_symptoms` text NOT NULL,
-  `chronic_disease_support_status` tinyint(1) NOT NULL DEFAULT '0',
-  `chronic_disease_supported_symptoms` text NOT NULL,
-  `medical_support_status` tinyint(1) NOT NULL DEFAULT '0',
-  `medical_support_detail` text NOT NULL,
-  `oxygen_day_in_liter` varchar(100) DEFAULT NULL,
-  `oxygen_night_in_liter` varchar(100) DEFAULT NULL,
-  `insulin_per_day` int(2) NOT NULL DEFAULT '0',
-  `insulin_timing` varchar(255) DEFAULT NULL,
-  `suction_of_phlegm_per_day` int(2) NOT NULL DEFAULT '0',
-  `artificial_dialysis_per_week` int(2) NOT NULL DEFAULT '0',
-  `medical_aid_at_night` tinyint(1) NOT NULL DEFAULT '0',
-  `nursing_services` text NOT NULL,
-  `other_requirements` text NOT NULL,
-  `created_at` datetime NOT NULL,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `nursing_welfare_consulter_id` (`nursing_welfare_consulter_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `prefectures`
+-- テーブルの構造 `prefectures`
 --
 
 CREATE TABLE IF NOT EXISTS `prefectures` (
@@ -372,181 +244,124 @@ CREATE TABLE IF NOT EXISTS `prefectures` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `reha_works`
+-- テーブルの構造 `progress_statuses`
 --
 
-CREATE TABLE IF NOT EXISTS `reha_works` (
-  `serial` varchar(100) NOT NULL,
-  `お名前` varchar(100) NOT NULL,
-  `ふりがな` varchar(100) NOT NULL,
-  `生年月日` varchar(100) NOT NULL,
-  `郵便番号` varchar(100) NOT NULL,
-  `都道府県` varchar(100) NOT NULL,
-  `市区町村` varchar(255) NOT NULL,
-  `番地・建物名` varchar(255) NOT NULL,
-  `携帯番号` varchar(100) NOT NULL,
-  `メールアドレス` varchar(255) NOT NULL,
-  `連絡の取りやすい時間帯` varchar(100) NOT NULL,
-  `経験年数` varchar(100) NOT NULL,
-  `入職希望時期` varchar(100) NOT NULL,
-  `就業形態` varchar(100) NOT NULL,
-  `就業状況` varchar(100) NOT NULL,
-  `希望勤務地１` varchar(100) NOT NULL,
-  `希望勤務地２` varchar(100) NOT NULL,
-  `希望事業所形態` varchar(500) NOT NULL,
-  `資格取得年` varchar(100) NOT NULL,
-  `職務施設１` varchar(100) NOT NULL,
-  `職務年数１` varchar(100) NOT NULL,
-  `職務施設２` varchar(100) NOT NULL,
-  `職務年数２` varchar(100) NOT NULL,
-  `職務施設３` varchar(100) NOT NULL,
-  `職務年数３` varchar(100) NOT NULL,
-  `職務施設４` varchar(100) NOT NULL,
-  `職務年数４` varchar(100) NOT NULL,
-  `職務施設５` varchar(100) NOT NULL,
-  `職務年数５` varchar(100) NOT NULL,
-  `work_type` varchar(100) NOT NULL,
-  `date` datetime NOT NULL,
-  KEY `serial` (`serial`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `rigaku`
---
-
-CREATE TABLE IF NOT EXISTS `rigaku` (
-  `serial` varchar(100) NOT NULL,
-  `お名前` varchar(100) NOT NULL,
-  `ふりがな` varchar(100) NOT NULL,
-  `生年月日` varchar(100) NOT NULL,
-  `郵便番号` varchar(100) NOT NULL,
-  `都道府県` varchar(100) NOT NULL,
-  `市区町村` varchar(255) NOT NULL,
-  `番地・建物名` varchar(255) NOT NULL,
-  `携帯番号` varchar(100) NOT NULL,
-  `メールアドレス` varchar(255) NOT NULL,
-  `連絡の取りやすい時間帯` varchar(100) NOT NULL,
-  `経験年数` varchar(100) NOT NULL,
-  `入職希望時期` varchar(100) NOT NULL,
-  `就業形態` varchar(100) NOT NULL,
-  `就業状況` varchar(100) NOT NULL,
-  `希望勤務地１` varchar(100) NOT NULL,
-  `希望勤務地２` varchar(100) NOT NULL,
-  `希望事業所形態` varchar(500) NOT NULL,
-  `資格取得年` varchar(100) NOT NULL,
-  `職務施設１` varchar(100) NOT NULL,
-  `職務年数１` varchar(100) NOT NULL,
-  `職務施設２` varchar(100) NOT NULL,
-  `職務年数２` varchar(100) NOT NULL,
-  `職務施設３` varchar(100) NOT NULL,
-  `職務年数３` varchar(100) NOT NULL,
-  `職務施設４` varchar(100) NOT NULL,
-  `職務年数４` varchar(100) NOT NULL,
-  `職務施設５` varchar(100) NOT NULL,
-  `職務年数５` varchar(100) NOT NULL,
-  `date` datetime NOT NULL,
-  KEY `serial` (`serial`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `sagyo`
---
-
-CREATE TABLE IF NOT EXISTS `sagyo` (
-  `serial` varchar(100) NOT NULL,
-  `お名前` varchar(100) NOT NULL,
-  `ふりがな` varchar(100) NOT NULL,
-  `生年月日` varchar(100) NOT NULL,
-  `郵便番号` varchar(100) NOT NULL,
-  `都道府県` varchar(100) NOT NULL,
-  `市区町村` varchar(255) NOT NULL,
-  `番地・建物名` varchar(255) NOT NULL,
-  `携帯番号` varchar(100) NOT NULL,
-  `メールアドレス` varchar(255) NOT NULL,
-  `連絡の取りやすい時間帯` varchar(100) NOT NULL,
-  `経験年数` varchar(100) NOT NULL,
-  `入職希望時期` varchar(100) NOT NULL,
-  `就業形態` varchar(100) NOT NULL,
-  `就業状況` varchar(100) NOT NULL,
-  `希望勤務地１` varchar(100) NOT NULL,
-  `希望勤務地２` varchar(100) NOT NULL,
-  `希望事業所形態` varchar(500) NOT NULL,
-  `資格取得年` varchar(100) NOT NULL,
-  `職務施設１` varchar(100) NOT NULL,
-  `職務年数１` varchar(100) NOT NULL,
-  `職務施設２` varchar(100) NOT NULL,
-  `職務年数２` varchar(100) NOT NULL,
-  `職務施設３` varchar(100) NOT NULL,
-  `職務年数３` varchar(100) NOT NULL,
-  `職務施設４` varchar(100) NOT NULL,
-  `職務年数４` varchar(100) NOT NULL,
-  `職務施設５` varchar(100) NOT NULL,
-  `職務年数５` varchar(100) NOT NULL,
-  `date` datetime NOT NULL,
-  KEY `serial` (`serial`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `service_periods`
---
-
-CREATE TABLE IF NOT EXISTS `service_periods` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL COMMENT '職歴年数',
-  `sort_no` smallint(4) NOT NULL,
-  `created_at` datetime NOT NULL,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `sort_no` (`sort_no`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=12 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `users`
---
-
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `role` varchar(100) NOT NULL DEFAULT 'admin',
-  `ip_address` varchar(100) DEFAULT NULL,
+CREATE TABLE IF NOT EXISTS `progress_statuses` (
+  `id` int(2) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` datetime NOT NULL,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `id` (`id`,`role`,`deleted`)
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `work_histories`
+-- テーブルの構造 `qualifications`
+--
+
+CREATE TABLE IF NOT EXISTS `qualifications` (
+  `id` int(4) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `is_other` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` datetime NOT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=66 ;
+
+-- --------------------------------------------------------
+
+--
+-- テーブルの構造 `qualification_histories`
+--
+
+CREATE TABLE IF NOT EXISTS `qualification_histories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `applicant_id` int(11) NOT NULL,
+  `name` varchar(255) DEFAULT NULL COMMENT '資格名',
+  `year` varchar(255) DEFAULT NULL COMMENT '取得年',
+  `month` varchar(255) DEFAULT NULL COMMENT '取得月',
+  `created_at` datetime NOT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `applicant_id` (`applicant_id`),
+  KEY `name` (`name`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1967 ;
+
+-- --------------------------------------------------------
+
+--
+-- テーブルの構造 `upload_documents`
+--
+
+CREATE TABLE IF NOT EXISTS `upload_documents` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `target_id` int(11) NOT NULL,
+  `type` varchar(100) NOT NULL,
+  `remark` varchar(255) NOT NULL,
+  `document` varchar(255) DEFAULT NULL,
+  `document_dir` varchar(255) DEFAULT NULL,
+  `document_type` varchar(255) DEFAULT NULL,
+  `document_size` bigint(20) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `target_id` (`target_id`,`type`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=102 ;
+
+-- --------------------------------------------------------
+
+--
+-- テーブルの構造 `users`
+--
+
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `employee_number` int(11) DEFAULT NULL COMMENT '社員番号',
+  `name` varchar(255) DEFAULT NULL COMMENT '担当者名',
+  `username` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` enum('admin','member') NOT NULL DEFAULT 'member',
+  `ip_address` varchar(100) DEFAULT NULL,
+  `applicant_count` int(11) NOT NULL DEFAULT '0',
+  `password_reset_token` varchar(255) DEFAULT NULL,
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` datetime NOT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `id` (`id`,`role`,`deleted`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=21 ;
+
+-- --------------------------------------------------------
+
+--
+-- テーブルの構造 `work_histories`
 --
 
 CREATE TABLE IF NOT EXISTS `work_histories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `applicant_id` int(11) NOT NULL,
+  `company_name` varchar(255) DEFAULT NULL COMMENT '勤務先名称',
+  `short_name` varchar(255) DEFAULT NULL,
+  `department_name` varchar(255) DEFAULT NULL COMMENT '部署',
+  `discipline` varchar(255) DEFAULT NULL COMMENT '科目',
+  `employment_pattern` varchar(255) DEFAULT NULL COMMENT '雇用形態',
+  `enrollment_year` varchar(255) DEFAULT NULL COMMENT '在籍年',
   `business_id` int(11) DEFAULT NULL COMMENT '職歴施設ID',
   `service_period_id` int(11) DEFAULT NULL COMMENT '職歴年数ID',
   `created_at` datetime NOT NULL,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `applicant_id` (`applicant_id`,`business_id`,`service_period_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=307 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2422 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `work_types`
+-- テーブルの構造 `work_types`
 --
 
 CREATE TABLE IF NOT EXISTS `work_types` (
@@ -558,3 +373,21 @@ CREATE TABLE IF NOT EXISTS `work_types` (
   PRIMARY KEY (`id`),
   KEY `sort_no` (`sort_no`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+
+-- --------------------------------------------------------
+
+--
+-- ビュー用の構造 `entry_posts`
+--
+DROP TABLE IF EXISTS `entry_posts`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`medical-jobs`@`%` SQL SECURITY DEFINER VIEW `entry_posts` AS select `meta`.`meta_id` AS `id`,`posts`.`ID` AS `post_id`,`posts`.`post_date` AS `post_date`,`posts`.`post_type` AS `post_type`,`meta`.`meta_key` AS `meta_key`,`meta`.`meta_value` AS `meta_value` from (`medical-jobs_wp`.`wpb3a60cposts` `posts` join `medical-jobs_wp`.`wpb3a60cpostmeta` `meta` on((`meta`.`post_id` = `posts`.`ID`))) where (`posts`.`post_type` like '%mwf_%');
+
+-- --------------------------------------------------------
+
+--
+-- ビュー用の構造 `posts`
+--
+DROP TABLE IF EXISTS `posts`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`medical-jobs`@`%` SQL SECURITY DEFINER VIEW `posts` AS select `posts`.`ID` AS `id`,`posts`.`post_date` AS `post_date`,`posts`.`post_type` AS `post_type` from `medical-jobs_wp`.`wpb3a60cposts` `posts` where (`posts`.`post_type` like '%mwf_%');
